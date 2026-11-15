@@ -101,6 +101,12 @@ function room_by_slug(string $slug): ?array
     return $st->fetch() ?: null;
 }
 
+/** Link-preview bots (WhatsApp, Facebook, Telegram, X...) should get the page itself, not a redirect. */
+function is_link_bot(): bool
+{
+    return (bool)preg_match('/WhatsApp|facebookexternalhit|Facebot|Twitterbot|TelegramBot|LinkedInBot|Slackbot|Discordbot|SkypeUriPreview|Pinterest|Googlebot|bingbot/i', (string)($_SERVER['HTTP_USER_AGENT'] ?? ''));
+}
+
 function lang_url(string $lang, string $path = ''): string
 {
     return '/' . $lang . '/' . ltrim($path, '/');
@@ -136,7 +142,17 @@ function page_open(string $lang, string $title, string $desc, string $path, ?arr
 <meta property="og:description" content="<?= e($desc) ?>">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="<?= e(LANGS[$lang]['locale']) ?>">
-<?php if ($ogImage): ?><meta property="og:image" content="<?= e($base . $ogImage) ?>"><?php endif; ?>
+<meta property="og:site_name" content="<?= e($name) ?>">
+<meta property="og:url" content="<?= e($base . lang_url($lang, $path)) ?>">
+<meta name="twitter:card" content="<?= $ogImage ? 'summary_large_image' : 'summary' ?>">
+<?php if ($ogImage):
+    $dim = preg_match('#^/uploads/[a-f0-9]{20}\.(jpg|png|webp)$#', $ogImage) ? @getimagesize(UPLOAD_DIR . '/' . basename($ogImage)) : false; ?>
+<meta property="og:image" content="<?= e($base . $ogImage) ?>">
+<meta property="og:image:alt" content="<?= e($name) ?>">
+<?php if ($dim): ?><meta property="og:image:width" content="<?= (int)$dim[0] ?>">
+<meta property="og:image:height" content="<?= (int)$dim[1] ?>">
+<?php endif; ?><meta name="twitter:image" content="<?= e($base . $ogImage) ?>">
+<?php endif; ?>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;800&family=Cormorant+Garamond:wght@500;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/site.css?v=4">

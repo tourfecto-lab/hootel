@@ -49,6 +49,10 @@ if ($path === '/request' && $method === 'POST') {
     exit;
 }
 if ($path === '/') {
+    if (is_link_bot()) { // previews and crawlers read the page directly (no redirect)
+        render_home(detect_lang());
+        exit;
+    }
     redirect('/' . detect_lang() . '/', 302);
 }
 
