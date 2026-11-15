@@ -457,7 +457,7 @@ function render_faq(string $lang): void
             '@type' => 'Question', 'name' => tr_json(json_encode($f['d']['q'] ?? []), $lang),
             'acceptedAnswer' => ['@type' => 'Answer', 'text' => tr_json(json_encode($f['d']['a'] ?? []), $lang)]], $faq)];
     }
-    page_open($lang, $u['h_faq'] . ' – ' . $name, $u['h_policies'] . ' · ' . $name, 'faq', $ld);
+    page_open($lang, $u['h_faq'] . ' – ' . $name, $u['h_policies'] . ' · ' . $name, 'faq', $ld, db()->query('SELECT path FROM gallery ORDER BY sort, id LIMIT 1')->fetchColumn() ?: null);
     ?>
 <main>
   <section class="wrap">
@@ -489,7 +489,7 @@ function render_contact(string $lang): void
     $name = tr_json(setting('name_json'), $lang);
     $phone = setting('phone');
     $wa = preg_replace('/\D/', '', setting('whatsapp'));
-    page_open($lang, $u['h_contact'] . ' – ' . $name, tr_json(setting('address_json'), $lang), 'contact', hotel_ld($lang));
+    page_open($lang, $u['h_contact'] . ' – ' . $name, tr_json(setting('address_json'), $lang), 'contact', hotel_ld($lang), db()->query('SELECT path FROM gallery ORDER BY sort, id LIMIT 1 OFFSET 2')->fetchColumn() ?: null);
     ?>
 <main>
   <section class="wrap">
