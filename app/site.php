@@ -66,6 +66,10 @@ function capture_source(): void
             break;
         }
     }
+    // landing pages for booking platforms count as that platform when no utm tag is given
+    if ($utm === '' && preg_match('#^/[a-z]{2}/via/([a-z]+)$#', (string)parse_url((string)($_SERVER['REQUEST_URI'] ?? ''), PHP_URL_PATH), $vm) && isset(PLATFORMS[$vm[1]])) {
+        $utm = $vm[1];
+    }
     $_SESSION['src'] = [
         'utm_source' => $utm, 'utm_medium' => $clean($_GET['utm_medium'] ?? ''), 'utm_campaign' => $clean($_GET['utm_campaign'] ?? ''),
         'referrer' => $ref, 'label' => $utm !== '' ? strtolower($utm) : ($auto !== '' ? $auto : ($ref !== '' ? 'other-site' : 'direct')),
@@ -175,6 +179,7 @@ function page_open(string $lang, string $title, string $desc, string $path, ?arr
     <a href="<?= e($home) ?>#location"><?= e($u['nav_location']) ?></a>
     <a href="<?= e(lang_url($lang, 'faq')) ?>"><?= e($u['nav_faq']) ?></a>
     <a href="<?= e(lang_url($lang, 'contact')) ?>"><?= e($u['nav_contact']) ?></a>
+    <a href="<?= e(lang_url($lang, 'book-direct')) ?>"><?= e($u['nav_direct']) ?></a>
     <a href="<?= e($home) ?>#book" class="cta-sm"><?= e($u['nav_book']) ?></a>
     <details class="langs">
       <summary><?= e(LANGS[$lang]['name']) ?></summary>
