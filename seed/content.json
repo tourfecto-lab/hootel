@@ -139,5 +139,9 @@
             "sort": 22,
             "label_json": "{\"ar\":\"حمام في كل غرفة\",\"en\":\"Bathroom in every room\",\"de\":\"Bad in jedem Zimmer\",\"fr\":\"Salle de bain dans chaque chambre\",\"it\":\"Bagno in ogni camera\",\"es\":\"Baño en cada habitación\",\"ru\":\"Ванная в каждом номере\",\"zh\":\"每间客房配卫生间\"}"
         }
-    ]
+    ],
+    "settings": {
+        "checkin": "12:00",
+        "checkout": "12:00"
+    }
 }

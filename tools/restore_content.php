@@ -28,4 +28,19 @@ $am = $pdo->prepare('INSERT INTO amenities(akey, icon, confirmed, sort, label_js
     ON CONFLICT(akey) DO UPDATE SET confirmed = excluded.confirmed, icon = excluded.icon, sort = excluded.sort, label_json = excluded.label_json');
 foreach ($data['amenities'] as $a) { $am->execute([$a['akey'], $a['icon'], (int)$a['confirmed'], (int)$a['sort'], $a['label_json']]); }
 
+// facts confirmed by the owner: only fill a setting when it is still empty (never overwrite admin edits)
+foreach (($data['settings'] ?? []) as $k => $v) {
+    if (setting($k) === '') { set_setting($k, (string)$v); }
+}
+// one policy entry about check-in / check-out, added once
+$has = $pdo->prepare("SELECT COUNT(*) FROM items WHERE type = 'policy' AND data_json LIKE ?");
+$has->execute(['%Check-in and check-out%']);
+if ((int)$has->fetchColumn() === 0) {
+    $max = (int)$pdo->query("SELECT COALESCE(MAX(sort), 0) FROM items WHERE type = 'policy'")->fetchColumn();
+    $pdo->prepare("INSERT INTO items(type, sort, active, data_json) VALUES('policy', ?, 1, ?)")->execute([$max + 1, json_encode([
+        'title' => ['en' => 'Check-in and check-out', 'ar' => 'الدخول والخروج'],
+        'text' => ['en' => 'Check-in from 12:00 (noon). Check-out by 12:00 (noon) on the day of departure.', 'ar' => 'الدخول من الساعة 12 الظهر. الخروج حتى الساعة 12 الظهر في يوم المغادرة.'],
+    ], JSON_UNESCAPED_UNICODE)]);
+}
+
 echo "gallery: $g photos | room photos: $r | amenities: " . count($data['amenities']) . " | hero: " . ($have($data['hero'] ?? '') ? 'set' : 'missing') . "\n";
