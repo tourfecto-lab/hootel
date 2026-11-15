@@ -1,0 +1,143 @@
+{
+    "hero": "/uploads/232bebde3013908b5a57.jpg",
+    "gallery": [
+        "/uploads/bfad379bd365ca4b307f.jpg",
+        "/uploads/c093756587b5c6e4b664.jpg",
+        "/uploads/62e62c6ae38fd5e4d162.jpg",
+        "/uploads/a904ceed9b20f7912d41.jpg",
+        "/uploads/8d48fc3379cf772cdf35.jpg",
+        "/uploads/d0ee7c06b4db164e1a13.jpg",
+        "/uploads/6b2af4d1fad98c12ba2f.jpg",
+        "/uploads/f2b319e3b5a51efd6c0e.jpg",
+        "/uploads/b43485dfed4ff83fbbce.jpg",
+        "/uploads/56a713dcb2de71e48b9d.jpg",
+        "/uploads/22e09cd3f13bb72d1f63.jpg",
+        "/uploads/a2941fbd3bdcffa9d343.jpg",
+        "/uploads/2e3fdf575bc9a03e34d5.jpg",
+        "/uploads/7b6b65182523067f6eb9.jpg",
+        "/uploads/4feb1c0a6b5d48293721.jpg",
+        "/uploads/b8d5b316f844ba63e818.jpg",
+        "/uploads/f319f748357313d7a3b8.jpg",
+        "/uploads/232bebde3013908b5a57.jpg",
+        "/uploads/3205b8c692010caa524c.jpg",
+        "/uploads/df4fd3ca1e05708060fb.jpg",
+        "/uploads/b3fab3d9686f05d7fa74.jpg",
+        "/uploads/4e2ac719478515b6239c.jpg",
+        "/uploads/cd90b2e1d22ce90b53e8.jpg",
+        "/uploads/fd71b51db4af7c5c65f5.jpg",
+        "/uploads/3adc78a267626e1e9959.jpg"
+    ],
+    "rooms": {
+        "single": [
+            "/uploads/01b567211349442d4205.jpg",
+            "/uploads/b50d415763b676d31e19.jpg",
+            "/uploads/544d6713d06da4c2c74a.jpg",
+            "/uploads/d8940b00414beaf205b1.jpg"
+        ],
+        "double": [
+            "/uploads/d0ee7c06b4db164e1a13.jpg",
+            "/uploads/6b2af4d1fad98c12ba2f.jpg",
+            "/uploads/d52956391bdef22eae43.jpg",
+            "/uploads/a709f9dc843b690f9c65.jpg"
+        ],
+        "triple": [
+            "/uploads/22e09cd3f13bb72d1f63.jpg",
+            "/uploads/56a713dcb2de71e48b9d.jpg",
+            "/uploads/f2b319e3b5a51efd6c0e.jpg"
+        ],
+        "dorm-male": [
+            "/uploads/4e2ac719478515b6239c.jpg",
+            "/uploads/cd90b2e1d22ce90b53e8.jpg"
+        ],
+        "dorm-female": [
+            "/uploads/9c70b946f6a0c6ab3a2c.jpg",
+            "/uploads/850ff9aa3c06da8d5272.jpg"
+        ]
+    },
+    "amenities": [
+        {
+            "akey": "wifi",
+            "icon": "📶",
+            "confirmed": 1,
+            "sort": 0,
+            "label_json": "{\"ar\":\"واي فاي\",\"en\":\"Wi-Fi\",\"de\":\"WLAN\",\"fr\":\"Wi-Fi\",\"it\":\"Wi-Fi\",\"es\":\"Wi-Fi\",\"ru\":\"Wi-Fi\",\"zh\":\"无线网络\"}"
+        },
+        {
+            "akey": "ac",
+            "icon": "❄️",
+            "confirmed": 1,
+            "sort": 1,
+            "label_json": "{\"ar\":\"تكييف\",\"en\":\"Air conditioning\",\"de\":\"Klimaanlage\",\"fr\":\"Climatisation\",\"it\":\"Aria condizionata\",\"es\":\"Aire acondicionado\",\"ru\":\"Кондиционер\",\"zh\":\"空调\"}"
+        },
+        {
+            "akey": "breakfast",
+            "icon": "🍳",
+            "confirmed": 1,
+            "sort": 2,
+            "label_json": "{\"ar\":\"فطار\",\"en\":\"Breakfast\",\"de\":\"Frühstück\",\"fr\":\"Petit-déjeuner\",\"it\":\"Colazione\",\"es\":\"Desayuno\",\"ru\":\"Завтрак\",\"zh\":\"早餐\"}"
+        },
+        {
+            "akey": "restaurant",
+            "icon": "🍽️",
+            "confirmed": 0,
+            "sort": 3,
+            "label_json": "{\"ar\":\"مطعم\",\"en\":\"Restaurant\",\"de\":\"Restaurant\",\"fr\":\"Restaurant\",\"it\":\"Ristorante\",\"es\":\"Restaurante\",\"ru\":\"Ресторан\",\"zh\":\"餐厅\"}"
+        },
+        {
+            "akey": "laundry",
+            "icon": "🧺",
+            "confirmed": 0,
+            "sort": 4,
+            "label_json": "{\"ar\":\"خدمة غسيل\",\"en\":\"Laundry service\",\"de\":\"Wäscheservice\",\"fr\":\"Service de blanchisserie\",\"it\":\"Servizio lavanderia\",\"es\":\"Servicio de lavandería\",\"ru\":\"Прачечная\",\"zh\":\"洗衣服务\"}"
+        },
+        {
+            "akey": "elevator",
+            "icon": "🛗",
+            "confirmed": 0,
+            "sort": 5,
+            "label_json": "{\"ar\":\"أسانسير\",\"en\":\"Elevator\",\"de\":\"Aufzug\",\"fr\":\"Ascenseur\",\"it\":\"Ascensore\",\"es\":\"Ascensor\",\"ru\":\"Лифт\",\"zh\":\"电梯\"}"
+        },
+        {
+            "akey": "reception",
+            "icon": "🛎️",
+            "confirmed": 0,
+            "sort": 6,
+            "label_json": "{\"ar\":\"استقبال 24 ساعة\",\"en\":\"24-hour reception\",\"de\":\"Rezeption rund um die Uhr\",\"fr\":\"Réception 24h\\/24\",\"it\":\"Reception 24 ore\",\"es\":\"Recepción 24 horas\",\"ru\":\"Круглосуточная стойка регистрации\",\"zh\":\"24小时前台\"}"
+        },
+        {
+            "akey": "pool",
+            "icon": "🏊",
+            "confirmed": 0,
+            "sort": 7,
+            "label_json": "{\"ar\":\"مسبح\",\"en\":\"Pool\",\"de\":\"Pool\",\"fr\":\"Piscine\",\"it\":\"Piscina\",\"es\":\"Piscina\",\"ru\":\"Бассейн\",\"zh\":\"游泳池\"}"
+        },
+        {
+            "akey": "shuttle",
+            "icon": "🚐",
+            "confirmed": 0,
+            "sort": 8,
+            "label_json": "{\"ar\":\"توصيل من المطار\",\"en\":\"Airport shuttle\",\"de\":\"Flughafentransfer\",\"fr\":\"Navette aéroport\",\"it\":\"Navetta aeroportuale\",\"es\":\"Traslado al aeropuerto\",\"ru\":\"Трансфер из аэропорта\",\"zh\":\"机场接送\"}"
+        },
+        {
+            "akey": "tv",
+            "icon": "📺",
+            "confirmed": 1,
+            "sort": 20,
+            "label_json": "{\"ar\":\"شاشة عرض في الغرفة\",\"en\":\"TV in every room\",\"de\":\"Fernseher in jedem Zimmer\",\"fr\":\"Télévision dans chaque chambre\",\"it\":\"TV in ogni camera\",\"es\":\"TV en cada habitación\",\"ru\":\"Телевизор в каждом номере\",\"zh\":\"每间客房配电视\"}"
+        },
+        {
+            "akey": "balcony",
+            "icon": "🌆",
+            "confirmed": 1,
+            "sort": 21,
+            "label_json": "{\"ar\":\"بلكونة بإطلالة على وسط البلد\",\"en\":\"Balcony overlooking downtown Cairo\",\"de\":\"Balkon mit Blick auf die Innenstadt\",\"fr\":\"Balcon avec vue sur le centre-ville\",\"it\":\"Balcone con vista sul centro\",\"es\":\"Balcón con vistas al centro de El Cairo\",\"ru\":\"Балкон с видом на центр Каира\",\"zh\":\"阳台可俯瞰开罗市中心\"}"
+        },
+        {
+            "akey": "bathroom",
+            "icon": "🚿",
+            "confirmed": 1,
+            "sort": 22,
+            "label_json": "{\"ar\":\"حمام في كل غرفة\",\"en\":\"Bathroom in every room\",\"de\":\"Bad in jedem Zimmer\",\"fr\":\"Salle de bain dans chaque chambre\",\"it\":\"Bagno in ogni camera\",\"es\":\"Baño en cada habitación\",\"ru\":\"Ванная в каждом номере\",\"zh\":\"每间客房配卫生间\"}"
+        }
+    ]
+}
