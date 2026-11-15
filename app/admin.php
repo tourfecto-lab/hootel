@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/admin_extra.php';
 require_once __DIR__ . '/admin_ota.php';
+require_once __DIR__ . '/admin_report.php';
 
 const ADMIN_IDLE = 7200;
 const STATUSES = ['new' => 'New', 'contacted' => 'Contacted', 'confirmed' => 'Confirmed', 'cancelled' => 'Cancelled'];
@@ -47,6 +48,8 @@ function admin_dispatch(string $path, string $method): void
         case 'calendar': admin_calendar(); break;
         case 'pricing': admin_pricing($method); break;
         case 'ota': admin_ota($method); break;
+        case 'report': admin_report($method); break;
+        case 'report.csv': admin_report_csv(); break;
         case 'faq': admin_items($method, 'faq'); break;
         case 'policies': admin_items($method, 'policy'); break;
         case 'nearby': admin_items($method, 'attraction'); break;
@@ -78,7 +81,7 @@ function admin_layout(string $title, string $body, string $active): void
     $isAdmin = ($_SESSION['admin_role'] ?? 'admin') === 'admin';
     $nav = ['dashboard' => ['/admin', 'Dashboard'], 'requests' => ['/admin/requests', 'Booking requests'], 'calendar' => ['/admin/calendar', 'Availability calendar']];
     if ($isAdmin) {
-        $nav += ['ota' => ['/admin/ota', 'OTA calendar sync'], 'rooms' => ['/admin/rooms', 'Rooms & prices'], 'pricing' => ['/admin/pricing', 'Seasons & closures'],
+        $nav += ['report' => ['/admin/report', 'Monthly report'], 'ota' => ['/admin/ota', 'OTA calendar sync'], 'rooms' => ['/admin/rooms', 'Rooms & prices'], 'pricing' => ['/admin/pricing', 'Seasons & closures'],
             'amenities' => ['/admin/amenities', 'Amenities'], 'gallery' => ['/admin/gallery', 'Gallery'],
             'faq' => ['/admin/faq', 'FAQ'], 'policies' => ['/admin/policies', 'Policies'], 'nearby' => ['/admin/nearby', 'Nearby places'],
             'testimonials' => ['/admin/testimonials', 'Guest reviews'], 'links' => ['/admin/links', 'Platforms & social'],
@@ -267,6 +270,7 @@ function admin_dashboard(): void
         }
         $h .= '</ul></section>';
     }
+    $h .= dashboard_marketing();
     admin_layout('Dashboard', $h, 'dashboard');
 }
 
@@ -297,7 +301,8 @@ function admin_requests(string $method): void
                 if ($blocked) {
                     flash('Cannot confirm: that room type is full or closed for these dates. See the Availability calendar.', 'err');
                 } else {
-                    $p->prepare('UPDATE requests SET status = ?, note = ? WHERE id = ?')->execute([$st, mb_substr(trim((string)($_POST['note'] ?? '')), 0, 1000), $id]);
+                    $attr = in_array(($_POST['attrib'] ?? ''), ['agency', 'organic'], true) ? (string)$_POST['attrib'] : '';
+                    $p->prepare('UPDATE requests SET status = ?, note = ?, attrib = ? WHERE id = ?')->execute([$st, mb_substr(trim((string)($_POST['note'] ?? '')), 0, 1000), $attr, $id]);
                     flash('Saved.');
                 }
             }
@@ -316,7 +321,7 @@ function admin_requests(string $method): void
     $any = false;
     foreach ($rows as $r) {
         $any = true;
-        $wa = preg_replace('/\D/', '', $r['phone']);
+        $wa = wa_digits($r["phone"]);
         $nights = max(1, (int)(new DateTime($r['checkin']))->diff(new DateTime($r['checkout']))->days);
         $h .= '<form method="post" class="card req">' . csrf_field() . '<input type="hidden" name="id" value="' . (int)$r['id'] . '"><input type="hidden" name="back" value="' . e($f) . '">'
             . '<div class="reqhead"><b>' . e($r['name']) . '</b> <span class="muted">#' . (int)$r['id'] . ' · ' . e($r['created_at']) . ' UTC · ' . e(strtoupper($r['lang'])) . '</span>'
@@ -331,8 +336,8 @@ function admin_requests(string $method): void
         foreach (STATUSES as $k => $l) {
             $h .= '<option value="' . $k . '"' . ($r['status'] === $k ? ' selected' : '') . '>' . e($l) . '</option>';
         }
-        $h .= '</select><input name="note" placeholder="Internal note" value="' . e($r['note']) . '"><button class="btn sm">Save</button>'
-            . '<button class="btn sm danger" name="do" value="delete" onclick="return confirm(\'Delete this request?\')">Delete</button></div></form>';
+        $h .= '</select>' . attrib_select($r) . '<input name="note" placeholder="Internal note" value="' . e($r['note']) . '"><button class="btn sm">Save</button>'
+            . '<button class="btn sm danger" name="do" value="delete" onclick="return confirm(\'Delete this request?\')">Delete</button>' . wa_buttons($r) . '</div></form>';
     }
     if (!$any) {
         $h .= '<p class="muted">No requests here yet.</p>';
@@ -496,6 +501,12 @@ function admin_content(string $method): void
             if (!$langs) {
                 throw new RuntimeException('Enable at least one language.');
             }
+            foreach (['rate_usd', 'rate_eur'] as $k) {
+                $v = trim((string)($_POST[$k] ?? ''));
+                if ($v !== '' && (!is_numeric($v) || (float)$v < 0 || (float)$v > 10000)) {
+                    throw new RuntimeException('Exchange rates must be positive numbers.');
+                }
+            }
             $notify = trim((string)($_POST['notify_email'] ?? ''));
             if ($notify !== '' && !filter_var($notify, FILTER_VALIDATE_EMAIL)) {
                 throw new RuntimeException('Notification email is not valid.');
@@ -504,7 +515,7 @@ function admin_content(string $method): void
             if ($plink !== '' && !preg_match('#^(https://[^\s]+|/[^\s]*)$#', $plink)) {
                 throw new RuntimeException('Promo link must start with https:// or /');
             }
-            foreach (['phone', 'whatsapp', 'email', 'checkin', 'checkout', 'site_url', 'maps_url', 'metro_min', 'museum_min', 'lat', 'lng', 'notify_email', 'promo_link'] as $k) {
+            foreach (['phone', 'whatsapp', 'email', 'checkin', 'checkout', 'site_url', 'maps_url', 'metro_min', 'museum_min', 'lat', 'lng', 'notify_email', 'promo_link', 'rate_usd', 'rate_eur'] as $k) {
                 set_setting($k, mb_substr(trim((string)($_POST[$k] ?? '')), 0, 300));
             }
             foreach (['promo_json' => 'promo', 'seo_title_json' => 'seo_title', 'seo_desc_json' => 'seo_desc'] as $k => $f) {
@@ -543,6 +554,8 @@ function admin_content(string $method): void
         . '<label>Description (about 150 characters)</label>' . lang_inputs('seo_desc', setting('seo_desc_json'), true)
         . '<h2>Map & distances</h2><div class="row4">' . $in('lat', 'Latitude', 'dir="ltr"') . $in('lng', 'Longitude', 'dir="ltr"') . $in('metro_min', 'Metro walk (min)', 'type="number"') . $in('museum_min', 'Museum walk (min)', 'type="number"') . '</div>'
         . $in('maps_url', 'Google Maps link', 'dir="ltr"')
+        . '<h2>Price hint for foreign visitors</h2><p class="muted">Display only. Shows a small approximate price (for example ≈ $18) next to the EGP price. Enter how many EGP equal 1 USD / 1 EUR and update it now and then. Leave empty to hide.</p><div class="row3">'
+        . $in('rate_usd', 'EGP per 1 USD', 'type="number" step="0.01" min="0"') . $in('rate_eur', 'EGP per 1 EUR', 'type="number" step="0.01" min="0"') . '</div>'
         . '<h2>Languages</h2><div class="langpick">';
     $enabled = enabled_langs();
     foreach (LANGS as $c => $meta) {

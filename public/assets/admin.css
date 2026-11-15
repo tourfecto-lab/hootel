@@ -64,3 +64,8 @@ body.login{display:grid;place-items:center;grid-template-columns:1fr}.box{backgr
 .card-in{margin-bottom:14px}
 
 .pill.src{background:#e9defa;color:#4a2a82}
+
+.btn.gold{background:#25d366;color:#fff}
+.kv li span{overflow:hidden;text-overflow:ellipsis}
+code{background:var(--bg);padding:1px 6px;border-radius:5px;font-size:.85em}
+@media print{aside,.noprint,.flash,.btn{display:none!important}body{display:block;background:#fff;color:#000}main{padding:0;max-width:none}.card,.stat{break-inside:avoid;border-color:#ccc}}

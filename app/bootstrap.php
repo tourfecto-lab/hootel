@@ -105,6 +105,14 @@ function migrate(PDO $p): void
         $p->exec("ALTER TABLE requests ADD COLUMN source TEXT NOT NULL DEFAULT 'direct'");
         $p->exec("ALTER TABLE requests ADD COLUMN ext_uid TEXT NOT NULL DEFAULT ''");
     }
+    if (!$has('requests', 'utm_source')) {
+        foreach (['utm_source', 'utm_medium', 'utm_campaign', 'referrer', 'attrib'] as $c) {
+            $p->exec("ALTER TABLE requests ADD COLUMN $c TEXT NOT NULL DEFAULT ''");
+        }
+    }
+    $p->exec("CREATE TABLE IF NOT EXISTS events (
+        day TEXT NOT NULL, type TEXT NOT NULL, label TEXT NOT NULL DEFAULT '', n INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (day, type, label)
+    )");
     $p->exec("CREATE TABLE IF NOT EXISTS ical_feeds (
         id INTEGER PRIMARY KEY AUTOINCREMENT, room_slug TEXT NOT NULL, platform TEXT NOT NULL, url TEXT NOT NULL,
         last_sync TEXT NOT NULL DEFAULT '', last_status TEXT NOT NULL DEFAULT '', last_count INTEGER NOT NULL DEFAULT 0
@@ -324,6 +332,7 @@ function save_upload(array $file): string
     if (!move_uploaded_file($file['tmp_name'], UPLOAD_DIR . '/' . $name)) {
         throw new RuntimeException('Could not store file');
     }
+    make_thumb(UPLOAD_DIR . '/' . $name);
     return '/uploads/' . $name;
 }
 
@@ -331,7 +340,50 @@ function delete_upload(string $path): void
 {
     if (preg_match('#^/uploads/[a-f0-9]{20}\.(jpg|png|webp)$#', $path)) {
         @unlink(UPLOAD_DIR . '/' . basename($path));
+        @unlink(UPLOAD_DIR . '/' . preg_replace('/\.(jpg|png|webp)$/', '-640.jpg', basename($path)));
     }
+}
+
+/** Make a 640px-wide JPEG copy next to an upload (used by cards and galleries for speed). */
+function make_thumb(string $file): void
+{
+    $thumb = preg_replace('/\.(jpg|png|webp)$/', '-640.jpg', $file);
+    if ($thumb === $file || !function_exists('imagecreatefromstring')) {
+        return;
+    }
+    $im = @imagecreatefromstring((string)file_get_contents($file));
+    if (!$im) {
+        return;
+    }
+    $w = imagesx($im);
+    $h = imagesy($im);
+    if ($w > 640) {
+        $im = imagescale($im, 640, (int)round($h * 640 / $w)) ?: $im;
+    }
+    imagejpeg($im, $thumb, 78);
+}
+
+/** Thumbnail URL for an uploaded image if it exists, else the original. */
+function thumb(string $path): string
+{
+    if (preg_match('#^/uploads/([a-f0-9]{20})\.(jpg|png|webp)$#', $path, $m) && is_file(UPLOAD_DIR . '/' . $m[1] . '-640.jpg')) {
+        return '/uploads/' . $m[1] . '-640.jpg';
+    }
+    return $path;
+}
+
+/** Display-only price hint in USD or EUR using admin-set rates (EGP per unit). Empty for Arabic or when no rate is set. */
+function approx(int $egp, string $lang): string
+{
+    if ($lang === 'ar' || $egp <= 0) {
+        return '';
+    }
+    $eur = in_array($lang, ['de', 'fr', 'it', 'es'], true);
+    $rate = (float)setting($eur ? 'rate_eur' : 'rate_usd');
+    if ($rate <= 0) {
+        return '';
+    }
+    return '≈ ' . ($eur ? '€' : '$') . number_format($egp / $rate, 0);
 }
 
 require_once __DIR__ . '/ical.php';

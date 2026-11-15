@@ -40,6 +40,10 @@ if ($path === '/api/quote' && $method === 'GET') {
     api_quote();
     exit;
 }
+if ($path === '/api/event' && $method === 'POST') {
+    api_event();
+    exit;
+}
 if ($path === '/request' && $method === 'POST') {
     handle_request_post();
     exit;
@@ -51,6 +55,7 @@ if ($path === '/') {
 if (preg_match('#^/([a-z]{2})(?:/(.*))?$#', $path, $m) && in_array($m[1], enabled_langs(), true)) {
     $lang = $m[1];
     $sub = $m[2] ?? '';
+    capture_source();
     track_visit($lang);
     if ($sub === '') {
         render_home($lang);

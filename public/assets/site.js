@@ -50,3 +50,20 @@
     if (o.value && o.value <= this.value) o.value = '';
   });
 })();
+
+// click events (call / WhatsApp / email / platform links) for the marketing report; no personal data is sent
+(function () {
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('a[href]');
+    if (!a) return;
+    var h = a.getAttribute('href'), type = '', label = '';
+    if (h.indexOf('tel:') === 0) type = 'call';
+    else if (h.indexOf('mailto:') === 0) type = 'email';
+    else if (/^https?:\/\/(wa\.me|api\.whatsapp\.com)/.test(h)) type = 'whatsapp';
+    else if (a.classList.contains('lk')) { type = 'link'; try { label = new URL(h).hostname.replace(/^www\./, ''); } catch (x) {} }
+    else if (a.classList.contains('dir')) type = 'directions';
+    if (!type || !navigator.sendBeacon) return;
+    var f = new FormData(); f.append('type', type); f.append('label', label);
+    navigator.sendBeacon('/api/event', f);
+  });
+})();

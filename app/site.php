@@ -35,6 +35,60 @@ function track_visit(string $lang): void
     db()->prepare("INSERT INTO visits(day, lang, n) VALUES(date('now'), ?, 1) ON CONFLICT(day, lang) DO UPDATE SET n = n + 1")->execute([$lang]);
 }
 
+function record_event(string $type, string $label = ''): void
+{
+    db()->prepare("INSERT INTO events(day, type, label, n) VALUES(date('now'), ?, ?, 1) ON CONFLICT(day, type, label) DO UPDATE SET n = n + 1")
+        ->execute([$type, mb_substr($label, 0, 40)]);
+}
+
+/** Remember where this visitor came from (utm tags first, then the referring site) for the whole session. */
+function capture_source(): void
+{
+    if (isset($_SESSION['src']) || preg_match('/bot|crawl|spider|slurp|preview/i', (string)($_SERVER['HTTP_USER_AGENT'] ?? ''))) {
+        return;
+    }
+    $clean = fn($v) => preg_replace('/[^a-z0-9._\-]/i', '', mb_substr((string)$v, 0, 40));
+    $utm = $clean($_GET['utm_source'] ?? '');
+    $ref = '';
+    if (!empty($_SERVER['HTTP_REFERER'])) {
+        $h = strtolower((string)parse_url((string)$_SERVER['HTTP_REFERER'], PHP_URL_HOST));
+        $own = strtolower(preg_replace('/:\d+$/', '', (string)($_SERVER['HTTP_HOST'] ?? '')));
+        if ($h !== '' && $h !== $own) {
+            $ref = preg_replace('/^www\./', '', $h);
+        }
+    }
+    $map = ['facebook' => 'facebook', 'fb.' => 'facebook', 'instagram' => 'instagram', 'google.' => 'google', 'tiktok' => 'tiktok',
+        't.co' => 'x', 'twitter' => 'x', 'booking.com' => 'booking', 'tripadvisor' => 'tripadvisor', 'wa.me' => 'whatsapp', 'whatsapp' => 'whatsapp'];
+    $auto = '';
+    foreach ($map as $needle => $name) {
+        if ($ref !== '' && str_contains($ref, $needle)) {
+            $auto = $name;
+            break;
+        }
+    }
+    $_SESSION['src'] = [
+        'utm_source' => $utm, 'utm_medium' => $clean($_GET['utm_medium'] ?? ''), 'utm_campaign' => $clean($_GET['utm_campaign'] ?? ''),
+        'referrer' => $ref, 'label' => $utm !== '' ? strtolower($utm) : ($auto !== '' ? $auto : ($ref !== '' ? 'other-site' : 'direct')),
+    ];
+    record_event('session', $_SESSION['src']['label']);
+}
+
+function api_event(): void
+{
+    header('Cache-Control: no-store');
+    $host = strtolower((string)parse_url((string)($_SERVER['HTTP_ORIGIN'] ?? $_SERVER['HTTP_REFERER'] ?? ''), PHP_URL_HOST));
+    $own = strtolower(preg_replace('/:\d+$/', '', (string)($_SERVER['HTTP_HOST'] ?? '')));
+    if ($host === '' || $host !== $own || !throttle('event', 60, 60)) {
+        http_response_code(204);
+        return;
+    }
+    $type = (string)($_POST['type'] ?? '');
+    if (in_array($type, ['whatsapp', 'call', 'email', 'link', 'directions'], true)) {
+        record_event($type, preg_replace('/[^a-z0-9.\-]/i', '', (string)($_POST['label'] ?? '')));
+    }
+    http_response_code(204);
+}
+
 function active_rooms(): array
 {
     return db()->query('SELECT * FROM rooms WHERE active = 1 ORDER BY sort, id')->fetchAll();
@@ -85,7 +139,7 @@ function page_open(string $lang, string $title, string $desc, string $path, ?arr
 <?php if ($ogImage): ?><meta property="og:image" content="<?= e($base . $ogImage) ?>"><?php endif; ?>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;800&family=Cormorant+Garamond:wght@500;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site.css?v=3">
+<link rel="stylesheet" href="/assets/site.css?v=4">
 <?php if ($ld): ?><script type="application/ld+json"><?= json_encode($ld, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG) ?></script><?php endif; ?>
 </head>
 <body>
@@ -261,11 +315,11 @@ function render_home(string $lang): void
     <div class="grid">
       <?php foreach ($rooms as $r): $photos = json_decode($r['photos_json'], true) ?: []; $rn = tr_json($r['name_json'], $lang); ?>
         <a class="card" href="<?= e(lang_url($lang, 'rooms/' . $r['slug'])) ?>">
-          <div class="ph"><?php if ($photos): ?><img loading="lazy" src="<?= e($photos[0]) ?>" alt="<?= e($rn) ?>"><?php else: ?><?= e($u['photo_soon']) ?><?php endif; ?></div>
+          <div class="ph"><?php if ($photos): ?><img loading="lazy" src="<?= e(thumb($photos[0])) ?>" alt="<?= e($rn) ?>"><?php else: ?><?= e($u['photo_soon']) ?><?php endif; ?></div>
           <div class="card-b">
             <h3><?= e($rn) ?></h3>
             <p><?= e(tr_json($r['desc_json'], $lang)) ?></p>
-            <div class="price"><?= e(money((int)$r['price'], $lang)) ?> <small><?= e($u[$r['unit'] === 'bed' ? 'per_bed' : 'per_night']) ?></small></div>
+            <div class="price"><?= e(money((int)$r['price'], $lang)) ?> <small><?= e($u[$r['unit'] === 'bed' ? 'per_bed' : 'per_night']) ?></small><?php if ($ap = approx((int)$r['price'], $lang)): ?> <small class="ap"><?= e($ap) ?></small><?php endif; ?></div>
             <span class="more"><?= e($u['view_room']) ?> →</span>
           </div>
         </a>
@@ -286,7 +340,7 @@ function render_home(string $lang): void
   <section id="gallery" class="wrap">
     <h2><?= e($u['h_gallery']) ?></h2>
     <div class="gal">
-      <?php foreach ($gallery as $g): ?><a href="<?= e($g['path']) ?>"><img loading="lazy" src="<?= e($g['path']) ?>" alt="<?= e(tr_json($g['caption_json'], $lang) ?: $name) ?>"></a><?php endforeach; ?>
+      <?php foreach ($gallery as $g): ?><a href="<?= e($g['path']) ?>"><img loading="lazy" src="<?= e(thumb($g['path'])) ?>" alt="<?= e(tr_json($g['caption_json'], $lang) ?: $name) ?>"></a><?php endforeach; ?>
     </div>
   </section>
   <?php endif; ?>
@@ -307,7 +361,7 @@ function render_home(string $lang): void
       <div>
         <p class="addr"><?= e(tr_json(setting('address_json'), $lang)) ?></p>
         <ul class="near"><?= nearby_list($lang) ?></ul>
-        <?php if (setting('maps_url') !== ''): ?><a class="btn" target="_blank" rel="noopener" href="<?= e(setting('maps_url')) ?>"><?= e($u['directions']) ?></a><?php endif; ?>
+        <?php if (setting('maps_url') !== ''): ?><a class="btn dir" target="_blank" rel="noopener" href="<?= e(setting('maps_url')) ?>"><?= e($u['directions']) ?></a><?php endif; ?>
       </div>
       <?= map_iframe($lang) ?>
     </div>
@@ -351,11 +405,11 @@ function render_room(string $lang, array $room): void
   <section class="wrap">
     <nav class="crumbs"><a href="<?= e(lang_url($lang)) ?>"><?= e($u['home']) ?></a> › <a href="<?= e(lang_url($lang)) ?>#rooms"><?= e($u['nav_rooms']) ?></a> › <?= e($rn) ?></nav>
     <h1 class="pt"><?= e($rn) ?></h1>
-    <p class="price big"><?= e(money((int)$room['price'], $lang)) ?> <small><?= e($u[$room['unit'] === 'bed' ? 'per_bed' : 'per_night']) ?></small></p>
+    <p class="price big"><?= e(money((int)$room['price'], $lang)) ?> <small><?= e($u[$room['unit'] === 'bed' ? 'per_bed' : 'per_night']) ?></small><?php if ($ap = approx((int)$room['price'], $lang)): ?> <small class="ap"><?= e($ap) ?></small><?php endif; ?></p>
     <p class="lead2"><?= e($desc) ?></p>
     <p class="muted"><?= e($u['sleeps']) ?>: <?= (int)$room['guests'] ?></p>
     <?php if ($photos): ?>
-      <div class="gal roomgal"><?php foreach ($photos as $p): ?><a href="<?= e($p) ?>"><img loading="lazy" src="<?= e($p) ?>" alt="<?= e($rn) ?>"></a><?php endforeach; ?></div>
+      <div class="gal roomgal"><?php foreach ($photos as $p): ?><a href="<?= e($p) ?>"><img loading="lazy" src="<?= e(thumb($p)) ?>" alt="<?= e($rn) ?>"></a><?php endforeach; ?></div>
     <?php endif; ?>
     <?php if ($amen): ?>
       <h2><?= e($u['room_inc']) ?></h2>
@@ -431,7 +485,7 @@ function render_contact(string $lang): void
         <div class="hero-cta">
           <?php if ($phone): ?><a class="btn" href="tel:<?= e($phone) ?>"><?= e($u['call_us']) ?></a><?php endif; ?>
           <?php if ($wa): ?><a class="btn gold" target="_blank" rel="noopener" href="https://wa.me/<?= e($wa) ?>?text=<?= e(rawurlencode($u['wa_hello'])) ?>"><?= e($u['open_wa']) ?></a><?php endif; ?>
-          <?php if (setting('maps_url') !== ''): ?><a class="btn ghost dk" target="_blank" rel="noopener" href="<?= e(setting('maps_url')) ?>"><?= e($u['directions']) ?></a><?php endif; ?>
+          <?php if (setting('maps_url') !== ''): ?><a class="btn ghost dk dir" target="_blank" rel="noopener" href="<?= e(setting('maps_url')) ?>"><?= e($u['directions']) ?></a><?php endif; ?>
         </div>
       </div>
       <?= map_iframe($lang) ?>
@@ -518,8 +572,11 @@ function handle_request_post(): void
         $fail('not_available');
     }
     $total = quote_total($room, $in, $out, $guests);
-    db()->prepare('INSERT INTO requests(created_at, name, phone, room_slug, checkin, checkout, guests, lang, message, ip, est_total) VALUES(?,?,?,?,?,?,?,?,?,?,?)')
-        ->execute([gmdate('Y-m-d H:i:s'), $name, $phone, $room['slug'], $in, $out, $guests, $lang, mb_substr($msg, 0, 1000), client_ip(), $total]);
+    $src = $_SESSION['src'] ?? [];
+    db()->prepare('INSERT INTO requests(created_at, name, phone, room_slug, checkin, checkout, guests, lang, message, ip, est_total, utm_source, utm_medium, utm_campaign, referrer) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)')
+        ->execute([gmdate('Y-m-d H:i:s'), $name, $phone, $room['slug'], $in, $out, $guests, $lang, mb_substr($msg, 0, 1000), client_ip(), $total,
+            $src['utm_source'] ?? '', $src['utm_medium'] ?? '', $src['utm_campaign'] ?? '', $src['referrer'] ?? '']);
+    record_event('request', (string)($src['label'] ?? 'direct'));
 
     $to = setting('notify_email');
     if ($to !== '' && filter_var($to, FILTER_VALIDATE_EMAIL)) {

@@ -149,3 +149,5 @@ h1.pt{font-size:clamp(2rem,5vw,3.2rem);color:var(--walnut);text-shadow:none;marg
 .contact p{margin:0 0 14px}
 .muted{color:var(--muted)}
 .wa-float:hover{background:#1ebe5b}
+
+.price .ap{color:var(--muted);font-weight:400;font-size:.8rem}
