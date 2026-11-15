@@ -83,3 +83,45 @@ aaPanel → **Cron → Shell Script**:
 3. أو اختر **Repository URL** واستخدم رابط SSH `git@github.com:tourfecto-lab/hootel.git` مع **Deploy key**: انسخ المفتاح العام من aaPanel وأضفه في GitHub: *hootel → Settings → Deploy keys* (للقراءة فقط).
 
 بعد أي نشر عبر Git: انسخ `data/site.sqlite` من الحزمة إلى مجلد `data/` (قاعدة البيانات غير موجودة في Git عمدًا) ثم نفّذ الخطوة 4.
+
+## تحديث تلقائي من GitHub (كل push على main)
+الفكرة: سيرفر aaPanel يسحب التحديثات تلقائيًا كل دقيقة. `deploy.sh` بيسحب فقط التحديثات الآمنة، ولا يلمس `data/` ولا الصور المرفوعة، ولو ملف PHP فيه خطأ بيرجع للنسخة السابقة (وبيسجل في `data/deploy.log`).
+
+### 1) صلاحية قراءة دائمة للمستودع الخاص (مرة واحدة)
+توكن الربط في aaPanel بينتهي بعد ساعات، فاستخدم **Deploy key**:
+```bash
+ssh-keygen -t ed25519 -f /root/.ssh/hootel_deploy -N "" -C "hootel-server"
+cat /root/.ssh/hootel_deploy.pub        # انسخ المفتاح العام
+```
+في GitHub: **tourfecto-lab/hootel ← Settings ← Deploy keys ← Add deploy key**: الصق المفتاح، واتركه **Read-only**.
+```bash
+cat >> /root/.ssh/config <<'CFG'
+Host github-hootel
+  HostName github.com
+  User git
+  IdentityFile /root/.ssh/hootel_deploy
+  IdentitiesOnly yes
+CFG
+chmod 600 /root/.ssh/config
+cd /www/wwwroot/kingspalacehotel.online
+git remote set-url origin git@github-hootel:tourfecto-lab/hootel.git
+git config --global --add safe.directory /www/wwwroot/kingspalacehotel.online
+ssh -o StrictHostKeyChecking=accept-new -T git@github-hootel   # لازم يرد: successfully authenticated
+git pull --ff-only
+chmod +x deploy.sh
+```
+
+### 2) Cron كل دقيقة
+aaPanel ← **Cron ← Shell Script** (كل 1 دقيقة):
+```bash
+PHP_BIN=/www/server/php/84/bin/php /bin/bash /www/wwwroot/kingspalacehotel.online/deploy.sh
+```
+> غيّر `84` إلى إصدار PHP المستخدم في الموقع. لا تلمس مهام cron الخاصة بـ Tourfecto.
+
+### 3) كيف تحدّث الموقع
+أي `git push` على `main` ← خلال دقيقة يظهر على الموقع. للتأكد: `tail data/deploy.log`.
+
+### ملاحظات
+- تغييرات قاعدة البيانات (جداول/أعمدة جديدة) بتتطبق تلقائيًا أول مرة تُفتح الصفحة.
+- الصور المرفوعة من لوحة الأدمن لا تدخل Git، وهي محمية من التحديث.
+- لو غيّرت ملفات على السيرفر يدويًا، التحديث التلقائي ممكن يرفضها (fast-forward فقط)؛ غيّر من الكود المحلي دائمًا.
