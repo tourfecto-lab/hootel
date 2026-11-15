@@ -134,6 +134,12 @@ function migrate(PDO $p): void
         $p->exec("INSERT INTO settings(k, v) VALUES('phone', '+201092759292') ON CONFLICT(k) DO UPDATE SET v = '+201092759292' WHERE v IN ('', '+20223919374')");
         $p->exec("INSERT INTO settings(k, v) VALUES('whatsapp', '201092759292') ON CONFLICT(k) DO UPDATE SET v = '201092759292' WHERE v = ''");
     });
+    // 2026-11-15: Facebook page and Instagram account (only fills empty links)
+    $apply('2026-11-15-social-links', function () use ($p): void {
+        $st = $p->prepare("UPDATE links SET url = ? WHERE lkey = ? AND url = ''");
+        $st->execute(['https://www.facebook.com/profile.php?id=61596534813592', 'facebook']);
+        $st->execute(['https://www.instagram.com/kingspalacehotel.cairo/', 'instagram']);
+    });
 }
 
 // ---------- availability & pricing ----------
