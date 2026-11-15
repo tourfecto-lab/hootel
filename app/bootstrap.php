@@ -118,6 +118,22 @@ function migrate(PDO $p): void
         last_sync TEXT NOT NULL DEFAULT '', last_status TEXT NOT NULL DEFAULT '', last_count INTEGER NOT NULL DEFAULT 0
     )");
     $p->exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_req_ext ON requests(source, ext_uid) WHERE ext_uid <> ""');
+
+    // one-time data patches (idempotent, never override values the admin changed)
+    $p->exec('CREATE TABLE IF NOT EXISTS patches (id TEXT PRIMARY KEY, at TEXT NOT NULL)');
+    $apply = function (string $id, callable $fn) use ($p): void {
+        $st = $p->prepare('SELECT 1 FROM patches WHERE id = ?');
+        $st->execute([$id]);
+        if (!$st->fetchColumn()) {
+            $fn();
+            $p->prepare('INSERT INTO patches(id, at) VALUES(?, ?)')->execute([$id, gmdate('c')]);
+        }
+    };
+    // 2026-11-15: unified hotel number 01092759292 (phone + WhatsApp)
+    $apply('2026-11-15-unified-phone', function () use ($p): void {
+        $p->exec("INSERT INTO settings(k, v) VALUES('phone', '+201092759292') ON CONFLICT(k) DO UPDATE SET v = '+201092759292' WHERE v IN ('', '+20223919374')");
+        $p->exec("INSERT INTO settings(k, v) VALUES('whatsapp', '201092759292') ON CONFLICT(k) DO UPDATE SET v = '201092759292' WHERE v = ''");
+    });
 }
 
 // ---------- availability & pricing ----------
