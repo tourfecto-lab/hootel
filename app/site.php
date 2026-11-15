@@ -146,7 +146,7 @@ function page_open(string $lang, string $title, string $desc, string $path, ?arr
 <meta property="og:url" content="<?= e($base . lang_url($lang, $path)) ?>">
 <meta name="twitter:card" content="<?= $ogImage ? 'summary_large_image' : 'summary' ?>">
 <?php if ($ogImage):
-    $dim = preg_match('#^/uploads/[a-f0-9]{20}\.(jpg|png|webp)$#', $ogImage) ? @getimagesize(UPLOAD_DIR . '/' . basename($ogImage)) : false; ?>
+    $dim = preg_match('#^/uploads/[a-f0-9]{20}\.(jpg|png|webp)$#', $ogImage) ? @getimagesize(UPLOAD_DIR . '/' . basename($ogImage)) : (str_starts_with($ogImage, '/assets/brand/') ? @getimagesize(ROOT . '/public' . $ogImage) : false); ?>
 <meta property="og:image" content="<?= e($base . $ogImage) ?>">
 <meta property="og:image:alt" content="<?= e($name) ?>">
 <?php if ($dim): ?><meta property="og:image:width" content="<?= (int)$dim[0] ?>">
@@ -155,7 +155,10 @@ function page_open(string $lang, string $title, string $desc, string $path, ?arr
 <?php endif; ?>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;800&family=Cormorant+Garamond:wght@500;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site.css?v=4">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/brand/favicon-32.png">
+<link rel="apple-touch-icon" href="/assets/brand/favicon-192.png">
+<meta name="theme-color" content="#24150c">
+<link rel="stylesheet" href="/assets/site.css?v=5">
 <?php if ($ld): ?><script type="application/ld+json"><?= json_encode($ld, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG) ?></script><?php endif; ?>
 </head>
 <body>
@@ -309,7 +312,7 @@ function render_home(string $lang): void
     $seoD = tr_json(setting('seo_desc_json'), $lang);
     $min = $rooms ? min(array_column($rooms, 'price')) : 0;
 
-    page_open($lang, $seoT !== '' ? $seoT : $name . ' – ' . $u['eyebrow'], $seoD !== '' ? $seoD : $tagline, '', hotel_ld($lang), $gallery[0]['path'] ?? null);
+    page_open($lang, $seoT !== '' ? $seoT : $name . ' – ' . $u['eyebrow'], $seoD !== '' ? $seoD : $tagline, '', hotel_ld($lang), '/assets/brand/social-card-1200x630.jpg');
     ?>
 <main id="top">
   <section class="hero lattice"<?= $hero ? ' style="background-image:linear-gradient(180deg,rgba(36,21,12,.35) 0%,rgba(36,21,12,.62) 55%,rgba(36,21,12,.92) 100%),url(' . e($hero) . ');background-size:cover;background-position:center"' : '' ?>>

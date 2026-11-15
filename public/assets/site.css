@@ -23,7 +23,8 @@ h1,h2,h3,.brand{font-family:'Cormorant Garamond','Amiri','Noto Serif SC',Georgia
 .top{position:sticky;top:0;z-index:30;background:var(--wood);color:#f3e6cf;box-shadow:0 2px 14px #0006}
 .top-in{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 20px;max-width:1180px;margin:auto}
 .brand{font-size:1.45rem;color:var(--amber);letter-spacing:.01em}
-.brand::before{content:"♛ ";font-size:.9em}
+.brand{display:inline-flex;align-items:center;gap:10px}
+.brand::before{content:"";width:36px;height:26px;background:url(/assets/brand/crown-transparent-256.png) center/contain no-repeat}
 .top nav{display:flex;align-items:center;gap:6px 18px;flex-wrap:wrap;font-size:.92rem}
 .top nav a:hover{color:var(--amber)}
 .cta-sm{background:var(--khaya);padding:5px 16px;border-radius:999px;color:#fff!important;font-weight:600}
