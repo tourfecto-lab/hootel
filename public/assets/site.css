@@ -23,7 +23,7 @@ h1,h2,h3,.brand{font-family:'Cormorant Garamond','Amiri','Noto Serif SC',Georgia
 .top{position:sticky;top:0;z-index:30;background:var(--wood);color:#f3e6cf;box-shadow:0 2px 14px #0006}
 .top-in{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 20px;max-width:1180px;margin:auto}
 .brand{font-size:1.45rem;color:var(--amber);letter-spacing:.01em}
-.brand{display:inline-flex;align-items:center;gap:10px}
+.brand{display:inline-flex;align-items:center;gap:10px;white-space:nowrap;flex-shrink:0}
 .brand::before{content:"";width:36px;height:26px;background:url(/assets/brand/crown-transparent-256.png) center/contain no-repeat}
 .top nav{display:flex;align-items:center;gap:6px 18px;flex-wrap:wrap;font-size:.92rem}
 .top nav a:hover{color:var(--amber)}
@@ -152,3 +152,17 @@ h1.pt{font-size:clamp(2rem,5vw,3.2rem);color:var(--walnut);text-shadow:none;marg
 .wa-float:hover{background:#1ebe5b}
 
 .price .ap{color:var(--muted);font-weight:400;font-size:.8rem}
+
+/* header v2: links row + tools (social icons, language) */
+.top-in{flex-wrap:wrap}
+.top nav{flex:1 1 auto;justify-content:center}
+.tools{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.tools .ico{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;border:1px solid #e0a23a55;color:var(--amber)}
+.tools .ico:hover{background:var(--amber);color:var(--wood)}
+@media(max-width:900px){
+  .top-in{gap:8px 12px}
+  .brand{order:1;font-size:1.25rem}
+  .tools{order:2;margin-inline-start:auto}
+  .top nav{order:3;flex:0 0 100%;flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;gap:6px 16px;padding:4px 0 2px;scrollbar-width:none;white-space:nowrap}
+  .top nav::-webkit-scrollbar{display:none}
+}

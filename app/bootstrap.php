@@ -140,6 +140,12 @@ function migrate(PDO $p): void
         $st->execute(['https://www.facebook.com/profile.php?id=61596534813592', 'facebook']);
         $st->execute(['https://www.instagram.com/kingspalacehotel.cairo/', 'instagram']);
     });
+    // 2026-11-16: Airbnb listing link (adds the platform row if missing, fills it only when empty)
+    $apply('2026-11-16-airbnb-link', function () use ($p): void {
+        $p->exec("INSERT OR IGNORE INTO links(lkey, label, url, sort) VALUES('airbnb', 'Airbnb', '', 6)");
+        $st = $p->prepare("UPDATE links SET url = ? WHERE lkey = 'airbnb' AND url = ''");
+        $st->execute(['https://ar.airbnb.com/rooms/1819846974341940860']);
+    });
 }
 
 // ---------- availability & pricing ----------
