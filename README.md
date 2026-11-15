@@ -24,3 +24,6 @@ Cron (every 15 min): `php /path/to/kings-palace-site/cron/sync_ical.php`. The si
 
 ## Never commit
 `data/` (SQLite DB with guest phone numbers and admin hashes). It is git-ignored.
+
+## Auto-deploy
+Pushes to main are pulled by the server every minute (see DEPLOY.md). Check `data/deploy.log` on the server.
