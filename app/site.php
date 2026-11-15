@@ -510,6 +510,7 @@ function render_contact(string $lang): void
       <?= map_iframe($lang) ?>
     </div>
   </section>
+  <?= howto_block($lang) ?>
   <?php booking_form($lang, active_rooms(), '', 'contact'); ?>
 </main>
 <?php

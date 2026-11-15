@@ -44,6 +44,21 @@
     }, 250);
   }
   ['room', 'in', 'out', 'guests'].forEach(function (n) { if (form.elements[n]) form.elements[n].addEventListener('change', refresh); });
+  // floating WhatsApp button carries the chosen room, dates and guests, so the hotel gets a ready request
+  var wa = document.querySelector('.wa-float');
+  if (wa) {
+    var base = wa.getAttribute('href');
+    var syncWa = function () {
+      var sel = form.elements['room'], a = get('in'), b = get('out');
+      var room = sel && sel.selectedIndex >= 0 ? sel.options[sel.selectedIndex].text : '';
+      var extra = [room, a && b ? a + ' → ' + b : '', get('guests') ? get('guests') + ' guests' : ''].filter(Boolean).join(' | ');
+      var u = new URL(base, location.href);
+      var text = u.searchParams.get('text') || '';
+      u.searchParams.set('text', extra && a && b ? text + ' (' + extra + ')' : text);
+      wa.href = u.toString();
+    };
+    ['room', 'in', 'out', 'guests'].forEach(function (n) { if (form.elements[n]) form.elements[n].addEventListener('change', syncWa); });
+  }
   // keep check-out after check-in
   form.elements['in'].addEventListener('change', function () {
     var o = form.elements['out']; o.min = this.value;

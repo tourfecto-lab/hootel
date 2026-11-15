@@ -409,3 +409,4 @@ function approx(int $egp, string $lang): string
 }
 
 require_once __DIR__ . '/ical.php';
+require_once __DIR__ . '/howto.php';
