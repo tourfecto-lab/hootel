@@ -1,0 +1,20 @@
+<?php
+return [
+    'nav_rooms' => 'Habitaciones', 'nav_amenities' => 'Servicios', 'nav_gallery' => 'Galería', 'nav_location' => 'Ubicación',
+    'nav_find' => 'Encuéntranos', 'nav_book' => 'Reservar',
+    'eyebrow' => 'Centro · El Cairo', 'cta_book' => 'Solicitar reserva', 'cta_rooms' => 'Ver habitaciones',
+    'h_rooms' => 'Habitaciones y tarifas', 'rooms_sub' => 'Habitaciones privadas con baño propio y camas en dormitorios masculinos y femeninos.',
+    'h_amenities' => 'Servicios', 'h_gallery' => 'Galería', 'h_location' => 'Ubicación', 'directions' => 'Cómo llegar',
+    'near_metro' => 'Estación de metro Mohamed Naguib', 'near_museum' => 'Museo Egipcio', 'min_walk' => 'min a pie',
+    'h_find' => 'Encuéntranos en', 'find_sub' => 'Todas nuestras páginas y plataformas de reserva en un solo lugar.',
+    'h_book' => 'Solicita tu reserva', 'book_sub' => 'Envíanos tus fechas y confirmaremos la disponibilidad directamente.',
+    'f_name' => 'Nombre', 'f_phone' => 'Teléfono / WhatsApp', 'f_room' => 'Tipo de habitación', 'f_in' => 'Llegada', 'f_out' => 'Salida',
+    'f_guests' => 'Huéspedes', 'f_msg' => 'Mensaje (opcional)', 'send_req' => 'Enviar solicitud', 'send_wa' => 'Enviar por WhatsApp',
+    'note' => 'Esto es una solicitud, no una reserva confirmada, hasta que respondamos y confirmemos la disponibilidad.',
+    'per_night' => 'por noche', 'per_bed' => 'por cama y noche', 'from' => 'Tarifas desde', 'photo_soon' => 'Fotos próximamente',
+    'disclaimer' => 'Precios en libras egipcias; pueden variar según temporada y disponibilidad.',
+    'thanks' => '¡Gracias!', 'thanks_sub' => 'Hemos recibido tu solicitud y te contactaremos pronto.',
+    'err_generic' => 'Algo salió mal. Inténtalo de nuevo.', 'err_dates' => 'Revisa las fechas.',
+    'err_rate' => 'Demasiadas solicitudes. Inténtalo más tarde.', 'back' => 'Volver al sitio',
+    'wa_hello' => 'Hola, quisiera solicitar una reserva en Kings Palace Hotel',
+];

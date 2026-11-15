@@ -1,0 +1,11 @@
+Options -Indexes
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ index.php [L]
+
+# never execute anything uploaded
+<FilesMatch "\.(php|phtml|phar)$">
+  <If "%{REQUEST_URI} =~ m#^/uploads/#">
+    Require all denied
+  </If>
+</FilesMatch>

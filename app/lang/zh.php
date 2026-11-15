@@ -1,0 +1,20 @@
+<?php
+return [
+    'nav_rooms' => '房型', 'nav_amenities' => '设施', 'nav_gallery' => '图片', 'nav_location' => '位置',
+    'nav_find' => '关注我们', 'nav_book' => '预订',
+    'eyebrow' => '市中心 · 开罗', 'cta_book' => '申请预订', 'cta_rooms' => '查看房型',
+    'h_rooms' => '房型与价格', 'rooms_sub' => '带独立卫生间的私人房间，以及男女分开的多人间床位。',
+    'h_amenities' => '设施', 'h_gallery' => '图片', 'h_location' => '位置', 'directions' => '获取路线',
+    'near_metro' => '穆罕默德·纳吉布地铁站', 'near_museum' => '埃及博物馆', 'min_walk' => '分钟步行',
+    'h_find' => '在这些平台找到我们', 'find_sub' => '我们所有的页面和预订平台，一站直达。',
+    'h_book' => '申请预订', 'book_sub' => '发送您的日期，我们会直接与您确认房态。',
+    'f_name' => '姓名', 'f_phone' => '电话 / WhatsApp', 'f_room' => '房型', 'f_in' => '入住日期', 'f_out' => '退房日期',
+    'f_guests' => '人数', 'f_msg' => '留言（选填）', 'send_req' => '提交申请', 'send_wa' => '通过 WhatsApp 发送',
+    'note' => '这只是预订申请，在我们回复并确认房态之前不代表预订成功。',
+    'per_night' => '每晚', 'per_bed' => '每床每晚', 'from' => '价格起', 'photo_soon' => '图片即将上传',
+    'disclaimer' => '价格以埃及镑计，可能随季节和房态变化。',
+    'thanks' => '谢谢！', 'thanks_sub' => '我们已收到您的申请，将尽快与您联系。',
+    'err_generic' => '出错了，请重试。', 'err_dates' => '请检查日期。',
+    'err_rate' => '请求过多，请稍后再试。', 'back' => '返回网站',
+    'wa_hello' => '您好，我想申请预订 Kings Palace Hotel',
+];

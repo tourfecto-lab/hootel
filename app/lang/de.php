@@ -1,0 +1,20 @@
+<?php
+return [
+    'nav_rooms' => 'Zimmer', 'nav_amenities' => 'Ausstattung', 'nav_gallery' => 'Galerie', 'nav_location' => 'Lage',
+    'nav_find' => 'Finden Sie uns', 'nav_book' => 'Buchen',
+    'eyebrow' => 'Innenstadt · Kairo', 'cta_book' => 'Buchung anfragen', 'cta_rooms' => 'Zimmer ansehen',
+    'h_rooms' => 'Zimmer & Preise', 'rooms_sub' => 'Privatzimmer mit eigenem Bad sowie Betten in Schlafsälen für Männer und Frauen.',
+    'h_amenities' => 'Ausstattung', 'h_gallery' => 'Galerie', 'h_location' => 'Lage', 'directions' => 'Route anzeigen',
+    'near_metro' => 'U-Bahn-Station Mohamed Naguib', 'near_museum' => 'Ägyptisches Museum', 'min_walk' => 'Min. zu Fuß',
+    'h_find' => 'Finden Sie uns auf', 'find_sub' => 'Alle unsere Seiten und Buchungsportale an einem Ort.',
+    'h_book' => 'Buchung anfragen', 'book_sub' => 'Senden Sie uns Ihre Reisedaten, wir bestätigen die Verfügbarkeit direkt.',
+    'f_name' => 'Name', 'f_phone' => 'Telefon / WhatsApp', 'f_room' => 'Zimmertyp', 'f_in' => 'Anreise', 'f_out' => 'Abreise',
+    'f_guests' => 'Gäste', 'f_msg' => 'Nachricht (optional)', 'send_req' => 'Anfrage senden', 'send_wa' => 'Per WhatsApp senden',
+    'note' => 'Dies ist eine Anfrage, keine bestätigte Buchung, bis wir antworten und die Verfügbarkeit bestätigen.',
+    'per_night' => 'pro Nacht', 'per_bed' => 'pro Bett und Nacht', 'from' => 'Preise ab', 'photo_soon' => 'Fotos folgen',
+    'disclaimer' => 'Preise in ägyptischen Pfund; Änderungen je nach Saison und Verfügbarkeit vorbehalten.',
+    'thanks' => 'Vielen Dank!', 'thanks_sub' => 'Wir haben Ihre Anfrage erhalten und melden uns in Kürze.',
+    'err_generic' => 'Etwas ist schiefgelaufen. Bitte erneut versuchen.', 'err_dates' => 'Bitte Datum prüfen.',
+    'err_rate' => 'Zu viele Anfragen. Bitte später erneut versuchen.', 'back' => 'Zurück zur Website',
+    'wa_hello' => 'Hallo, ich möchte eine Buchung im Kings Palace Hotel anfragen',
+];

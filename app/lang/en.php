@@ -1,0 +1,21 @@
+<?php
+return [
+    'currency' => 'EGP',
+    'nav_rooms' => 'Rooms', 'nav_amenities' => 'Amenities', 'nav_gallery' => 'Gallery', 'nav_location' => 'Location',
+    'nav_find' => 'Find us on', 'nav_book' => 'Book',
+    'eyebrow' => 'Downtown · Cairo', 'cta_book' => 'Request a booking', 'cta_rooms' => 'See rooms',
+    'h_rooms' => 'Rooms & rates', 'rooms_sub' => 'Private rooms with en-suite bathroom, plus beds in male and female dorms.',
+    'h_amenities' => 'Amenities', 'h_gallery' => 'Gallery', 'h_location' => 'Location', 'directions' => 'Get directions',
+    'near_metro' => 'Mohamed Naguib metro station', 'near_museum' => 'Egyptian Museum', 'min_walk' => 'min walk',
+    'h_find' => 'Find us on', 'find_sub' => 'All our pages and booking platforms in one place.',
+    'h_book' => 'Request your booking', 'book_sub' => 'Send your dates and we will confirm availability with you directly.',
+    'f_name' => 'Name', 'f_phone' => 'Phone / WhatsApp', 'f_room' => 'Room type', 'f_in' => 'Check-in', 'f_out' => 'Check-out',
+    'f_guests' => 'Guests', 'f_msg' => 'Message (optional)', 'send_req' => 'Send request', 'send_wa' => 'Send on WhatsApp',
+    'note' => 'This is a request, not a confirmed booking, until we reply and confirm availability.',
+    'per_night' => 'per night', 'per_bed' => 'per bed, per night', 'from' => 'Rates from', 'photo_soon' => 'Photos coming soon',
+    'disclaimer' => 'Prices are in Egyptian pounds and may change with season and availability.',
+    'thanks' => 'Thank you!', 'thanks_sub' => 'We received your request and will contact you shortly.',
+    'err_generic' => 'Something went wrong. Please try again.', 'err_dates' => 'Please check your dates.',
+    'err_rate' => 'Too many requests. Please try again later.', 'back' => 'Back to site',
+    'wa_hello' => "Hello, I'd like to request a booking at Kings Palace Hotel",
+];

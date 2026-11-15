@@ -1,0 +1,10 @@
+# database holds guest data and admin password hashes
+data/*
+!data/.gitkeep
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+.env
+*.log
+.DS_Store
+Thumbs.db
