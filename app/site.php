@@ -517,6 +517,49 @@ function render_contact(string $lang): void
     page_close($lang);
 }
 
+/** Landing pages for guests who find the hotel on a booking platform: /{lang}/book-direct and /{lang}/via/{platform}. */
+function render_ota(string $lang, ?string $platform): void
+{
+    $u = ui($lang);
+    $name = tr_json(setting('name_json'), $lang);
+    $label = $platform !== null ? PLATFORMS[$platform] : '';
+    $h1 = $platform !== null ? str_replace('{p}', $label, $u['ota_h_via']) : $u['ota_h'];
+    $desc = $platform !== null ? str_replace('{p}', $label, $u['ota_sub_via']) : $u['ota_sub'];
+    $path = $platform !== null ? 'via/' . $platform : 'book-direct';
+    $rooms = active_rooms();
+    $phone = setting('phone');
+    $wa = preg_replace('/\D/', '', setting('whatsapp'));
+    $gallery = db()->query('SELECT path FROM gallery ORDER BY sort, id LIMIT 1')->fetchColumn() ?: null;
+    page_open($lang, $h1 . ' – ' . $name, $desc, $path, hotel_ld($lang), $gallery);
+    ?>
+<main>
+  <section class="wrap">
+    <h1 class="pt"><?= e($h1) ?></h1>
+    <p class="sub"><?= e($desc) ?></p>
+    <ul class="near">
+      <?php foreach (['ota_b1', 'ota_b2', 'ota_b3', 'ota_b4'] as $k): ?><li><?= e($u[$k]) ?></li><?php endforeach; ?>
+    </ul>
+    <div class="hero-cta">
+      <a class="btn" href="#book"><?= e($u['cta_book']) ?></a>
+      <?php if ($wa): ?><a class="btn gold" target="_blank" rel="noopener" href="https://wa.me/<?= e($wa) ?>?text=<?= e(rawurlencode($u['wa_hello'])) ?>"><?= e($u['open_wa']) ?></a><?php endif; ?>
+      <?php if ($phone): ?><a class="btn ghost dk" href="tel:<?= e($phone) ?>"><?= e($u['call_us']) ?></a><?php endif; ?>
+    </div>
+    <?php if ($rooms): ?>
+      <h2><?= e($u['h_rooms']) ?></h2>
+      <div class="rooms">
+        <?php foreach ($rooms as $r): ?>
+          <a class="btn ghost dk" href="<?= e(lang_url($lang, 'rooms/' . $r['slug'])) ?>"><?= e(tr_json($r['name_json'], $lang)) ?> · <?= e($u['from_night']) ?> <?= e(money((int)$r['price'], $lang)) ?></a>
+        <?php endforeach; ?>
+      </div>
+    <?php endif; ?>
+    <p class="muted"><?= e($u['ota_note']) ?></p>
+  </section>
+  <?php booking_form($lang, $rooms, '', $path); ?>
+</main>
+<?php
+    page_close($lang);
+}
+
 function render_404(string $lang): void
 {
     http_response_code(404);
@@ -611,9 +654,14 @@ function handle_request_post(): void
 function sitemap(): void
 {
     $base = base_url();
-    $paths = ['', 'faq', 'contact'];
+    $paths = ['', 'faq', 'contact', 'book-direct'];
     foreach (active_rooms() as $r) {
         $paths[] = 'rooms/' . $r['slug'];
+    }
+    foreach (array_keys(PLATFORMS) as $pl) {
+        if ($pl !== 'other') {
+            $paths[] = 'via/' . $pl;
+        }
     }
     header('Content-Type: application/xml; charset=utf-8');
     echo '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">';

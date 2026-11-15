@@ -73,6 +73,14 @@ if (preg_match('#^/([a-z]{2})(?:/(.*))?$#', $path, $m) && in_array($m[1], enable
         render_contact($lang);
         exit;
     }
+    if ($sub === 'book-direct') {
+        render_ota($lang, null);
+        exit;
+    }
+    if (preg_match('#^via/([a-z]+)$#', $sub, $v) && isset(PLATFORMS[$v[1]]) && $v[1] !== 'other') {
+        render_ota($lang, $v[1]);
+        exit;
+    }
     if (preg_match('#^rooms/([a-z0-9\-]+)$#', $sub, $r) && ($room = room_by_slug($r[1]))) {
         render_room($lang, $room);
         exit;
