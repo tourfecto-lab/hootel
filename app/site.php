@@ -135,6 +135,12 @@ function social_icon(string $key): string
         'airbnb' => '<path d="M12 2c-1.3 0-2.3.8-3 2.1L4.1 14c-.5 1.1-.7 1.9-.7 2.6 0 2.1 1.6 3.7 3.7 3.7 1.7 0 3.2-1.1 4.9-3 1.7 1.9 3.2 3 4.9 3 2.1 0 3.7-1.6 3.7-3.7 0-.7-.2-1.5-.7-2.6L15 4.1C14.3 2.8 13.3 2 12 2zm0 2c.5 0 .9.4 1.3 1.1l4.5 9.4c.4.8.5 1.3.5 1.9 0 1-.8 1.8-1.8 1.8-.9 0-2-.9-3.4-2.7.9-1.2 1.5-2.4 1.5-3.5 0-1.6-1.2-2.8-2.6-2.8s-2.6 1.2-2.6 2.8c0 1.1.6 2.3 1.5 3.5-1.4 1.8-2.5 2.7-3.4 2.7-1 0-1.8-.8-1.8-1.8 0-.6.1-1.1.5-1.9l4.5-9.4c.4-.7.8-1.1 1.3-1.1zm0 7.4c.4 0 .6.4.6.9 0 .6-.3 1.4-.6 2-.3-.6-.6-1.4-.6-2 0-.5.2-.9.6-.9z"/>',
         'agoda' => '<text x="12" y="17.5" text-anchor="middle" font-size="15" font-weight="700" font-family="Arial,sans-serif">a</text>',
         'trivago' => '<text x="12" y="17.5" text-anchor="middle" font-size="15" font-weight="700" font-family="Arial,sans-serif">t</text>',
+        'booking' => '<text x="12" y="17.5" text-anchor="middle" font-size="15" font-weight="700" font-family="Arial,sans-serif">B</text>',
+        'hostelworld' => '<text x="12" y="17.5" text-anchor="middle" font-size="15" font-weight="700" font-family="Arial,sans-serif">H</text>',
+        'expedia' => '<text x="12" y="17.5" text-anchor="middle" font-size="15" font-weight="700" font-family="Arial,sans-serif">e</text>',
+        'tripadvisor' => '<circle cx="7.5" cy="13" r="3.6" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="16.5" cy="13" r="3.6" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="7.5" cy="13" r="1.2"/><circle cx="16.5" cy="13" r="1.2"/><path d="M3 9.5C5 7 8.3 6 12 6s7 1 9 3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
+        'google' => '<path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/>',
+        'tiktok' => '<path d="M16.6 2h-3.2v13.1a2.6 2.6 0 1 1-2.6-2.6c.3 0 .5 0 .8.1V9.3a5.8 5.8 0 1 0 5 5.7V8.6a7 7 0 0 0 4 1.3V6.7a4 4 0 0 1-4-4.7z"/>',
     ];
     return '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">' . ($paths[$key] ?? '') . '</svg>';
 }
@@ -185,7 +191,7 @@ function page_open(string $lang, string $title, string $desc, string $path, ?arr
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/brand/favicon-32.png">
 <link rel="apple-touch-icon" href="/assets/brand/favicon-192.png">
 <meta name="theme-color" content="#24150c">
-<link rel="stylesheet" href="/assets/site.css?v=5">
+<link rel="stylesheet" href="/assets/site.css?v=6">
 <?php if ($ld): ?><script type="application/ld+json"><?= json_encode($ld, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG) ?></script><?php endif; ?>
 </head>
 <body>
@@ -424,7 +430,7 @@ function render_home(string $lang): void
     <h2><?= e($u['h_find']) ?></h2>
     <p class="sub"><?= e($u['find_sub']) ?></p>
     <div class="links">
-      <?php foreach ($links as $l): ?><a class="lk" target="_blank" rel="noopener nofollow" href="<?= e($l['url']) ?>"><?= e($l['label']) ?></a><?php endforeach; ?>
+      <?php foreach ($links as $l): ?><a class="lk" target="_blank" rel="noopener nofollow" href="<?= e($l['url']) ?>"><?= social_icon($l['lkey']) ?><span><?= e($l['label']) ?></span></a><?php endforeach; ?>
     </div>
   </section>
   <?php endif; ?>
