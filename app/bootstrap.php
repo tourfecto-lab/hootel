@@ -152,6 +152,12 @@ function migrate(PDO $p): void
         $st = $p->prepare("UPDATE links SET url = ? WHERE lkey = 'agoda' AND url = ''");
         $st->execute(['https://www.agoda.com/kings-palace-hotel/hotel/bab-al-luq-eg.html']);
     });
+    // 2026-11-16: Trivago link (adds the platform row if missing, fills it only when empty)
+    $apply('2026-11-16-trivago-link', function () use ($p): void {
+        $p->exec("INSERT OR IGNORE INTO links(lkey, label, url, sort) VALUES('trivago', 'Trivago', '', 7)");
+        $st = $p->prepare("UPDATE links SET url = ? WHERE lkey = 'trivago' AND url = ''");
+        $st->execute(['https://www.trivago.com/en-US/srl?search=100-923123']);
+    });
 }
 
 // ---------- availability & pricing ----------

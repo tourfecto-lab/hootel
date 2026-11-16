@@ -120,7 +120,7 @@ function lang_url(string $lang, string $path = ''): string
 function header_socials(): array
 {
     $out = [];
-    $st = db()->query("SELECT lkey, url FROM links WHERE url <> '' AND lkey IN ('facebook','instagram','airbnb','agoda') ORDER BY CASE lkey WHEN 'facebook' THEN 1 WHEN 'instagram' THEN 2 WHEN 'airbnb' THEN 3 ELSE 4 END");
+    $st = db()->query("SELECT lkey, url FROM links WHERE url <> '' AND lkey IN ('facebook','instagram','airbnb','agoda','trivago') ORDER BY CASE lkey WHEN 'facebook' THEN 1 WHEN 'instagram' THEN 2 WHEN 'airbnb' THEN 3 WHEN 'agoda' THEN 4 ELSE 5 END");
     foreach ($st as $r) {
         $out[$r['lkey']] = $r['url'];
     }
@@ -134,6 +134,7 @@ function social_icon(string $key): string
         'instagram' => '<path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9a5.5 5.5 0 0 1-5.5 5.5h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2zm0 2A3.5 3.5 0 0 0 4 7.5v9A3.5 3.5 0 0 0 7.5 20h9a3.5 3.5 0 0 0 3.5-3.5v-9A3.5 3.5 0 0 0 16.5 4h-9zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm5.3-3.3a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4z"/>',
         'airbnb' => '<path d="M12 2c-1.3 0-2.3.8-3 2.1L4.1 14c-.5 1.1-.7 1.9-.7 2.6 0 2.1 1.6 3.7 3.7 3.7 1.7 0 3.2-1.1 4.9-3 1.7 1.9 3.2 3 4.9 3 2.1 0 3.7-1.6 3.7-3.7 0-.7-.2-1.5-.7-2.6L15 4.1C14.3 2.8 13.3 2 12 2zm0 2c.5 0 .9.4 1.3 1.1l4.5 9.4c.4.8.5 1.3.5 1.9 0 1-.8 1.8-1.8 1.8-.9 0-2-.9-3.4-2.7.9-1.2 1.5-2.4 1.5-3.5 0-1.6-1.2-2.8-2.6-2.8s-2.6 1.2-2.6 2.8c0 1.1.6 2.3 1.5 3.5-1.4 1.8-2.5 2.7-3.4 2.7-1 0-1.8-.8-1.8-1.8 0-.6.1-1.1.5-1.9l4.5-9.4c.4-.7.8-1.1 1.3-1.1zm0 7.4c.4 0 .6.4.6.9 0 .6-.3 1.4-.6 2-.3-.6-.6-1.4-.6-2 0-.5.2-.9.6-.9z"/>',
         'agoda' => '<text x="12" y="17.5" text-anchor="middle" font-size="15" font-weight="700" font-family="Arial,sans-serif">a</text>',
+        'trivago' => '<text x="12" y="17.5" text-anchor="middle" font-size="15" font-weight="700" font-family="Arial,sans-serif">t</text>',
     ];
     return '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">' . ($paths[$key] ?? '') . '</svg>';
 }
