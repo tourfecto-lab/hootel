@@ -146,6 +146,12 @@ function migrate(PDO $p): void
         $st = $p->prepare("UPDATE links SET url = ? WHERE lkey = 'airbnb' AND url = ''");
         $st->execute(['https://ar.airbnb.com/rooms/1819846974341940860']);
     });
+    // 2026-11-16: Agoda listing link (fills it only when empty)
+    $apply('2026-11-16-agoda-link', function () use ($p): void {
+        $p->exec("INSERT OR IGNORE INTO links(lkey, label, url, sort) VALUES('agoda', 'Agoda', '', 1)");
+        $st = $p->prepare("UPDATE links SET url = ? WHERE lkey = 'agoda' AND url = ''");
+        $st->execute(['https://www.agoda.com/kings-palace-hotel/hotel/bab-al-luq-eg.html']);
+    });
 }
 
 // ---------- availability & pricing ----------
